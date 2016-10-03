@@ -1,0 +1,19 @@
+name:                drvdiff
+version:             0.1.0
+synopsis:            Shows differences between Nix derivations.
+homepage:            https://github.com/DavidEGrayson/drvdiff
+license:             MIT
+license-file:        LICENSE
+author:              David Grayson
+maintainer:          davidegrayson@gmail.com
+copyright:           David Grayson
+category:            Development
+build-type:          Simple
+extra-source-files:  ChangeLog.md
+cabal-version:       >=1.10
+
+executable drvdiff
+  main-is:             Main.hs
+  build-depends:       base >=4.9 && <4.10
+  hs-source-dirs:      src
+  default-language:    Haskell2010
