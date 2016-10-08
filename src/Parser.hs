@@ -1,3 +1,6 @@
+-- http://www.program-transformation.org/Tools/ATermFormat
+-- Does not support annotated terms, reals, or blobs yet.
+
 module Parser where
 
 import Text.ParserCombinators.Parsec hiding (ParseError)
@@ -5,40 +8,34 @@ import qualified Text.ParserCombinators.Parsec
 
 type ParseError = Text.ParserCombinators.Parsec.ParseError
 
+data ATerm = Constant String
+           | Constructor String [ATerm]
+           | Tuple [ATerm]
+           | List [ATerm]
+           | QuotedString String
+           | Integer Int
+  deriving (Show)
+
 -- Each line contains 1 or more cells, separated by a comma
-aterm :: GenParser Char st [String]
-aterm =
-    do result <- cells
-       eol
-       eof
-       return result
+aterm :: GenParser Char st ATerm
+aterm = constructor <|> constant
 
--- Build up a list of cells.  Try to parse the first cell, then figure out
--- what ends the cell.
-cells :: GenParser Char st [String]
-cells =
-    do first <- cellContent
-       next <- remainingCells
-       return (first : next)
+constant :: GenParser Char st ATerm
+constant = do
+  name <- many1 alphaNum
+  return $ Constant name
 
--- The cell either ends with a comma, indicating that 1 or more cells follow,
--- or it doesn't, indicating that we're at the end of the cells for this line
-remainingCells :: GenParser Char st [String]
-remainingCells =
-    (char ',' >> cells)            -- Found comma?  More cells coming
-    <|> (return [])                -- No comma?  Return [], no more cells
+constructor :: GenParser Char st ATerm
+constructor = do
+  Constant name <- constant
+  Tuple args <- tuple
+  return $ Constructor name args
 
--- Each cell contains 0 or more characters, which must not be a comma or
--- EOL
-cellContent :: GenParser Char st String
-cellContent =
-    many (noneOf ",\n")
+tuple :: GenParser Char st ATerm
+tuple = do
+  contents <- between (char '(') (char ')') (aterm `sepBy` (char ','))
+  return $ Tuple contents
 
-
--- The end of line character is \n
-eol :: GenParser Char st Char
-eol = char '\n'
-
-parseAterm :: String -> String -> Either ParseError [String]
-parseAterm = parse aterm
+parseAterm :: String -> String -> Either ParseError ATerm
+parseAterm = parse (aterm <* eof)
 
