@@ -3,9 +3,10 @@ module Main where
 import Data.Text
 import Data.Text.IO
 import Parser
-import Prelude hiding (readFile, putStr)
+import Prelude hiding (readFile, putStr, putStrLn, hPutStrLn)
 import System.Environment
 import System.Exit
+import System.IO hiding (readFile, putStr, putStrLn, hPutStrLn)
 
 main :: IO ()
 main = do
@@ -14,9 +15,9 @@ main = do
   drv <- case parseDrv (unpack drvString) of
     Left error -> printParseErrorAndExit error
     Right drv -> pure $ drv
-  putStr drvString
+  putStrLn (pack (show drv))
 
 printParseErrorAndExit :: ParseError -> IO a
 printParseErrorAndExit error = do
-  -- TODO: print (formatParseError error)
+  hPutStrLn stderr (pack (show error))
   exitWith (ExitFailure 1)
