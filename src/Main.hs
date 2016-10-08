@@ -1,12 +1,22 @@
 module Main where
 
-import Parser ()
-import Data.Text.IO (readFile, putStr)
+import Data.Text
+import Data.Text.IO
+import Parser
 import Prelude hiding (readFile, putStr)
-import System.Environment (getArgs)
+import System.Environment
+import System.Exit
 
 main :: IO ()
 main = do
   [drvFilenameA, drvFilenameB] <- getArgs
-  t <- readFile drvFilenameA
-  putStr t
+  drvString <- readFile drvFilenameA
+  drv <- case parseDrv (unpack drvString) of
+    Left error -> printParseErrorAndExit error >>= fail ""
+    Right drv -> pure $ drv
+  putStr drvString
+
+printParseErrorAndExit :: ParseError -> IO ()
+printParseErrorAndExit error = do
+  -- TODO: print (formatParseError error)
+  exitWith (ExitFailure 1)

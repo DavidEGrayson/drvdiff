@@ -1,6 +1,9 @@
 module Parser where
 
-import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec hiding (ParseError)
+import qualified Text.ParserCombinators.Parsec
+
+type ParseError = Text.ParserCombinators.Parsec.ParseError
 
 {- A CSV file contains 0 or more lines, each of which is terminated
    by the end-of-line character (eol). -}
@@ -43,6 +46,6 @@ cellContent =
 eol :: GenParser Char st Char
 eol = char '\n'
 
-parseCSV :: String -> Either ParseError [[String]]
-parseCSV input = parse csvFile "(unknown)" input
+parseDrv :: String -> Either ParseError [[String]]
+parseDrv input = parse csvFile "(unknown)" input
 
