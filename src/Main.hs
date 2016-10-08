@@ -12,12 +12,12 @@ main :: IO ()
 main = do
   [drvFilenameA, drvFilenameB] <- getArgs
   drvString <- readFile drvFilenameA
-  drv <- case parseDrv (unpack drvString) of
+  drv <- case parseAterm drvFilenameA (unpack drvString) of
     Left error -> printParseErrorAndExit error
     Right drv -> pure $ drv
-  putStrLn (pack (show drv))
+  putStrLn $ pack (show drv)
 
 printParseErrorAndExit :: ParseError -> IO a
 printParseErrorAndExit error = do
-  hPutStrLn stderr (pack (show error))
+  hPutStrLn stderr $ pack (show error)
   exitWith (ExitFailure 1)

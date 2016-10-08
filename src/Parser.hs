@@ -5,19 +5,12 @@ import qualified Text.ParserCombinators.Parsec
 
 type ParseError = Text.ParserCombinators.Parsec.ParseError
 
-{- A CSV file contains 0 or more lines, each of which is terminated
-   by the end-of-line character (eol). -}
-csvFile :: GenParser Char st [[String]]
-csvFile =
-    do result <- many line
-       eof
-       return result
-
 -- Each line contains 1 or more cells, separated by a comma
-line :: GenParser Char st [String]
-line =
+aterm :: GenParser Char st [String]
+aterm =
     do result <- cells
-       eol                       -- end of line
+       eol
+       eof
        return result
 
 -- Build up a list of cells.  Try to parse the first cell, then figure out
@@ -46,6 +39,6 @@ cellContent =
 eol :: GenParser Char st Char
 eol = char '\n'
 
-parseDrv :: String -> Either ParseError [[String]]
-parseDrv input = parse csvFile "(unknown)" input
+parseAterm :: String -> String -> Either ParseError [String]
+parseAterm = parse aterm
 
