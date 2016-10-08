@@ -12,11 +12,11 @@ main = do
   [drvFilenameA, drvFilenameB] <- getArgs
   drvString <- readFile drvFilenameA
   drv <- case parseDrv (unpack drvString) of
-    Left error -> printParseErrorAndExit error >>= fail ""
+    Left error -> printParseErrorAndExit error
     Right drv -> pure $ drv
   putStr drvString
 
-printParseErrorAndExit :: ParseError -> IO ()
+printParseErrorAndExit :: ParseError -> IO a
 printParseErrorAndExit error = do
   -- TODO: print (formatParseError error)
   exitWith (ExitFailure 1)
