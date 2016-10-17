@@ -54,11 +54,8 @@ drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
 drvFromDerivArgs _ = Left WrongConstructorArgCount
 
 stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
-stringListFromAterm (List aterms) = stringListFromAtermList aterms
+stringListFromAterm (List aterms) = sequence (fmap stringFromAterm aterms)
 stringListFromAterm _ = Left NotAList
-
-stringListFromAtermList :: [Aterm] -> Either BadDerivationAtermError [String]
-stringListFromAtermList list = sequence (fmap stringFromAterm list)
 
 stringFromAterm :: Aterm -> Either BadDerivationAtermError String
 stringFromAterm (QuotedString string) = pure string
