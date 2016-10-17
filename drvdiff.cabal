@@ -15,6 +15,7 @@ executable drvdiff
   hs-source-dirs:      src
   main-is:             Main.hs
   other-modules:       Aterm,
+                       Derivation,
                        Parser
   build-depends:       base >=4.9 && <4.10,
                        parsec >=3.1.11 && <4.0.0,
