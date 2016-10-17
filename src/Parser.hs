@@ -17,9 +17,9 @@ data ATerm = Constant String
   deriving (Show)
 
 parseAterm :: String -> String -> Either ParseError ATerm
-parseAterm = parse (aterm <* eof)
+parseAterm = parse (aterm <* (optional (char '\n')) <* eof)
 
-aterm = constructor <|> constant <|> tuple <|> list
+aterm = constructor <|> constant <|> tuple <|> list <|> quotedString
 
 constant = do
   name <- many1 alphaNum
@@ -38,4 +38,10 @@ list = do
   contents <- between (char '[') (char ']') (aterm `sepBy` (char ','))
   return $ List contents
 
-
+quotedString = do
+  string <- between (char '"') (char '"') (many quotedStringChar)
+  return $ QuotedString string
+  where
+    quotedStringChar = escapedChar <|> normalChar
+    escapedChar = (char '\\') *> (oneOf ['\\', '"'])
+    normalChar = noneOf "\""
