@@ -1,22 +1,15 @@
 -- http://www.program-transformation.org/Tools/ATermFormat
--- Does not support annotated terms, reals, or blobs yet.
+-- Does not support annotated terms, reals, blobs, or ints yet.
 
-module Parser where
+module Parser (parseAterm, ParseError) where
 
+import Aterm
 import Text.ParserCombinators.Parsec hiding (ParseError)
 import qualified Text.ParserCombinators.Parsec
 
 type ParseError = Text.ParserCombinators.Parsec.ParseError
 
-data ATerm = Constant String
-           | Constructor String [ATerm]
-           | Tuple [ATerm]
-           | List [ATerm]
-           | QuotedString String
-           | Integer Int
-  deriving (Show)
-
-parseAterm :: String -> String -> Either ParseError ATerm
+parseAterm :: String -> String -> Either ParseError Aterm
 parseAterm = parse (aterm <* (optional (char '\n')) <* eof)
 
 aterm = constructor <|> constant <|> tuple <|> list <|> quotedString

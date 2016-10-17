@@ -14,7 +14,8 @@ cabal-version:       >=1.10
 executable drvdiff
   hs-source-dirs:      src
   main-is:             Main.hs
-  other-modules:       Parser
+  other-modules:       Aterm,
+                       Parser
   build-depends:       base >=4.9 && <4.10,
                        parsec >=3.1.11 && <4.0.0,
                        text >= 1.2.2.1 && <2.0.0.0
