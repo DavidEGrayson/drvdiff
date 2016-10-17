@@ -45,5 +45,12 @@ stringFromAterm _ = Left NotAString
 
 drvFromDeriveArgs :: [Aterm] -> Either BadDerivationAtermError Derivation
 drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
-  Derivation <$> (pure []) <*> (pure []) <*> (pure []) <*> stringFromAterm system <*> (pure "") <*> (pure []) <*> (pure [])
+  Derivation
+  <$> (pure [])
+  <*> (pure [])
+  <*> (pure [])
+  <*> stringFromAterm system
+  <*> stringFromAterm builder
+  <*> (pure [])
+  <*> (pure [])
   -- TODO: don't use dummy values above, use real values
