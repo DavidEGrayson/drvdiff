@@ -41,17 +41,6 @@ drvFromAterm :: Aterm -> Either BadDerivationAtermError Derivation
 drvFromAterm (Constructor "Derive" aterms) = drvFromDeriveArgs aterms
 drvFromAterm _ = Left NoDeriveConstructor
 
-stringFromAterm :: Aterm -> Either BadDerivationAtermError String
-stringFromAterm (QuotedString string) = pure string
-stringFromAterm _ = Left NotAString
-
-stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
-stringListFromAterm (List aterms) = stringListFromAtermList aterms
-stringListFromAterm _ = Left NotAList
-
-stringListFromAtermList :: [Aterm] -> Either BadDerivationAtermError [String]
-stringListFromAtermList list = sequence (fmap stringFromAterm list)
-
 drvFromDeriveArgs :: [Aterm] -> Either BadDerivationAtermError Derivation
 drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
   Derivation
@@ -63,3 +52,14 @@ drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
   <*> stringListFromAterm args
   <*> pure []  -- TODO: fix
 drvFromDerivArgs _ = Left WrongConstructorArgCount
+
+stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
+stringListFromAterm (List aterms) = stringListFromAtermList aterms
+stringListFromAterm _ = Left NotAList
+
+stringListFromAtermList :: [Aterm] -> Either BadDerivationAtermError [String]
+stringListFromAtermList list = sequence (fmap stringFromAterm list)
+
+stringFromAterm :: Aterm -> Either BadDerivationAtermError String
+stringFromAterm (QuotedString string) = pure string
+stringFromAterm _ = Left NotAString
