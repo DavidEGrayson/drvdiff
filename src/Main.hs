@@ -16,7 +16,7 @@ main = do
   drvAterm <- case parseAterm drvFilenameA (unpack drvString) of
     Left error -> printErrorAndExit error
     Right aterm -> pure $ aterm
-  drv <- case derivationFromAterm drvAterm of
+  drv <- case drvFromAterm drvAterm of
     Left error -> printErrorAndExit error
     Right drv -> pure $ drv
   putStrLn $ pack (show drv)
