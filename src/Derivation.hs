@@ -33,6 +33,7 @@ data DerivationInput = DerivationInput
 data BadDerivationAtermError =
   NoDeriveConstructor |
   NotAString |
+  NotAList |
   WrongConstructorArgCount
   deriving (Show)
 
@@ -44,14 +45,21 @@ stringFromAterm :: Aterm -> Either BadDerivationAtermError String
 stringFromAterm (QuotedString string) = pure string
 stringFromAterm _ = Left NotAString
 
+stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
+stringListFromAterm (List aterms) = stringListFromAtermList aterms
+stringListFromAterm _ = Left NotAList
+
+stringListFromAtermList :: [Aterm] -> Either BadDerivationAtermError [String]
+stringListFromAtermList list = sequence (fmap stringFromAterm list)
+
 drvFromDeriveArgs :: [Aterm] -> Either BadDerivationAtermError Derivation
 drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
   Derivation
   <$> pure []  -- TODO: fix
   <*> pure []  -- TODO: fix
-  <*> pure []  -- TODO: fix
+  <*> stringListFromAterm sources
   <*> stringFromAterm system
   <*> stringFromAterm builder
-  <*> pure []  -- TODO: fix
+  <*> stringListFromAterm args
   <*> pure []  -- TODO: fix
 drvFromDerivArgs _ = Left WrongConstructorArgCount
