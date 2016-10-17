@@ -6,8 +6,11 @@ data Derivation = Derivation
   {
     drvOutputs :: [DerivationOutput],
     drvInputs :: [DerivationInput],
-    drvBuilders :: [String]
-    -- TODO: add rest of fields
+    drvSources :: [String],
+    drvSystem :: String,
+    drvBuilder :: String,
+    drvArgs :: [String],
+    drvEnv :: [(String, String)]
   }
   deriving (Show)
 
@@ -28,10 +31,19 @@ data DerivationInput = DerivationInput
   deriving (Show)
 
 data BadDerivationAtermError =
-  WrongOverallStructure
+  NoDeriveConstructor |
+  NotAString
   deriving (Show)
 
 drvFromAterm :: Aterm -> Either BadDerivationAtermError Derivation
-drvFromAterm (Constructor "Derive" [outputs, inputs, builders, _, _, _, _]) =
-  Right (Derivation [] [] [])
-drvFromAterm _ = Left WrongOverallStructure
+drvFromAterm (Constructor "Derive" aterms) = drvFromDeriveArgs aterms
+drvFromAterm _ = Left NoDeriveConstructor
+
+stringFromAterm :: Aterm -> Either BadDerivationAtermError String
+stringFromAterm (QuotedString string) = pure string
+stringFromAterm _ = Left NotAString
+
+drvFromDeriveArgs :: [Aterm] -> Either BadDerivationAtermError Derivation
+drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
+  Derivation <$> (pure []) <*> (pure []) <*> (pure []) <*> stringFromAterm system <*> (pure "") <*> (pure []) <*> (pure [])
+  -- TODO: don't use dummy values above, use real values
