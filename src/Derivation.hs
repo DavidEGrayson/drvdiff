@@ -32,7 +32,8 @@ data DerivationInput = DerivationInput
 
 data BadDerivationAtermError =
   NoDeriveConstructor |
-  NotAString
+  NotAString |
+  WrongConstructorArgCount
   deriving (Show)
 
 drvFromAterm :: Aterm -> Either BadDerivationAtermError Derivation
@@ -46,11 +47,11 @@ stringFromAterm _ = Left NotAString
 drvFromDeriveArgs :: [Aterm] -> Either BadDerivationAtermError Derivation
 drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
   Derivation
-  <$> (pure [])
-  <*> (pure [])
-  <*> (pure [])
+  <$> pure []  -- TODO: fix
+  <*> pure []  -- TODO: fix
+  <*> pure []  -- TODO: fix
   <*> stringFromAterm system
   <*> stringFromAterm builder
-  <*> (pure [])
-  <*> (pure [])
-  -- TODO: don't use dummy values above, use real values
+  <*> pure []  -- TODO: fix
+  <*> pure []  -- TODO: fix
+drvFromDerivArgs _ = Left WrongConstructorArgCount
