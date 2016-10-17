@@ -16,26 +16,26 @@ data ATerm = Constant String
            | Integer Int
   deriving (Show)
 
--- Each line contains 1 or more cells, separated by a comma
-aterm :: GenParser Char st ATerm
-aterm = constructor <|> constant
+parseAterm :: String -> String -> Either ParseError ATerm
+parseAterm = parse (aterm <* eof)
 
-constant :: GenParser Char st ATerm
+aterm = constructor <|> constant <|> tuple <|> list
+
 constant = do
   name <- many1 alphaNum
   return $ Constant name
 
-constructor :: GenParser Char st ATerm
 constructor = do
   Constant name <- constant
   Tuple args <- tuple
   return $ Constructor name args
 
-tuple :: GenParser Char st ATerm
 tuple = do
   contents <- between (char '(') (char ')') (aterm `sepBy` (char ','))
   return $ Tuple contents
 
-parseAterm :: String -> String -> Either ParseError ATerm
-parseAterm = parse (aterm <* eof)
+list = do
+  contents <- between (char '[') (char ']') (aterm `sepBy` (char ','))
+  return $ List contents
+
 
