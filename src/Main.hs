@@ -12,14 +12,19 @@ import System.IO hiding (readFile, putStr, putStrLn, hPutStrLn)
 main :: IO ()
 main = do
   [drvFilenameA, drvFilenameB] <- getArgs
-  drvString <- readFile drvFilenameA
-  drvAtermA <- case parseAterm drvFilenameA (unpack drvString) of
+  drvA <- filenameToDrv drvFilenameA
+  drvB <- filenameToDrv drvFilenameB
+  putStrLn $ pack (show drvA)
+
+filenameToDrv :: String -> IO Derivation
+filenameToDrv drvFilename = do
+  drvString <- readFile drvFilename
+  drvAterm <- case parseAterm drvFilename (unpack drvString) of
     Left error -> printErrorAndExit error
     Right aterm -> pure $ aterm
-  drvA <- case drvFromAterm drvAtermA of
+  case drvFromAterm drvAterm of
     Left error -> printErrorAndExit error
     Right drv -> pure $ drv
-  putStrLn $ pack (show drvA)
 
 printErrorAndExit :: Show e => e -> IO a
 printErrorAndExit error = do
