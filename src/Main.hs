@@ -13,13 +13,13 @@ main :: IO ()
 main = do
   [drvFilenameA, drvFilenameB] <- getArgs
   drvString <- readFile drvFilenameA
-  drvAterm <- case parseAterm drvFilenameA (unpack drvString) of
+  drvAtermA <- case parseAterm drvFilenameA (unpack drvString) of
     Left error -> printErrorAndExit error
     Right aterm -> pure $ aterm
-  drv <- case drvFromAterm drvAterm of
+  drvA <- case drvFromAterm drvAtermA of
     Left error -> printErrorAndExit error
     Right drv -> pure $ drv
-  putStrLn $ pack (show drv)
+  putStrLn $ pack (show drvA)
 
 printErrorAndExit :: Show e => e -> IO a
 printErrorAndExit error = do
