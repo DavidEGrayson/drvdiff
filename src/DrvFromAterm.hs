@@ -1,0 +1,60 @@
+module DrvFromAterm (drvFromAterm, BadDerivationAtermError) where
+
+import Derivation
+import Aterm
+
+data BadDerivationAtermError =
+  NoDeriveConstructor |
+  NotAString |
+  NotAList |
+  NotAStringPair |
+  NotAnOutput |
+  NotAnInput |
+  WrongConstructorArgCount
+  deriving (Show)
+
+drvFromAterm :: Aterm -> Either BadDerivationAtermError Derivation
+drvFromAterm (Constructor "Derive" aterms) = drvFromDeriveArgs aterms
+drvFromAterm _ = Left NoDeriveConstructor
+
+drvFromDeriveArgs :: [Aterm] -> Either BadDerivationAtermError Derivation
+drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
+  Derivation
+  <$> listFromAterm outputFromAterm outputs
+  <*> listFromAterm inputFromAterm inputs
+  <*> listFromAterm stringFromAterm sources
+  <*> stringFromAterm system
+  <*> stringFromAterm builder
+  <*> listFromAterm stringFromAterm args
+  <*> listFromAterm stringPairFromAterm env
+drvFromDerivArgs _ = Left WrongConstructorArgCount
+
+listFromAterm :: (Aterm -> Either BadDerivationAtermError a) -> Aterm
+  -> Either BadDerivationAtermError [a]
+listFromAterm itemDecoder (List aterms) = sequence (fmap itemDecoder aterms)
+listFromAterm _ _ = Left NotAList
+
+outputFromAterm :: Aterm -> Either BadDerivationAtermError DerivationOutput
+outputFromAterm (Tuple [
+    QuotedString name, QuotedString path,
+    QuotedString unknown1, QuotedString unknown2
+  ]) = Right (DerivationOutput name path unknown1 unknown2)
+outputFromAterm _ = Left NotAnOutput
+
+inputFromAterm :: Aterm -> Either BadDerivationAtermError DerivationInput
+inputFromAterm (Tuple [QuotedString path, outputs]) =
+  DerivationInput path <$> stringListFromAterm outputs
+inputFromAterm _ = Left NotAnInput
+
+stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
+stringListFromAterm (List aterms) = sequence (fmap stringFromAterm aterms)
+stringListFromAterm _ = Left NotAList
+
+stringPairFromAterm :: Aterm -> Either BadDerivationAtermError (String, String)
+stringPairFromAterm (Tuple [QuotedString string1, QuotedString string2]) =
+  Right (string1, string2)
+stringPairFromAterm _ = Left NotAStringPair
+
+stringFromAterm :: Aterm -> Either BadDerivationAtermError String
+stringFromAterm (QuotedString string) = pure string
+stringFromAterm _ = Left NotAString

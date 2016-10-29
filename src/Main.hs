@@ -1,6 +1,7 @@
 module Main where
 
 import Derivation
+import DrvFromAterm
 import Parser
 import System.Environment
 import System.Exit
