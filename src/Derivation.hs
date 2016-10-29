@@ -34,6 +34,7 @@ data BadDerivationAtermError =
   NoDeriveConstructor |
   NotAString |
   NotAList |
+  NotAStringPair |
   WrongConstructorArgCount
   deriving (Show)
 
@@ -50,12 +51,21 @@ drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
   <*> stringFromAterm system
   <*> stringFromAterm builder
   <*> stringListFromAterm args
-  <*> pure []  -- TODO: fix
+  <*> stringPairsFromAterm env  -- TODO: fix
 drvFromDerivArgs _ = Left WrongConstructorArgCount
 
 stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
 stringListFromAterm (List aterms) = sequence (fmap stringFromAterm aterms)
 stringListFromAterm _ = Left NotAList
+
+stringPairsFromAterm :: Aterm -> Either BadDerivationAtermError [(String, String)]
+stringPairsFromAterm (List aterms) = sequence (fmap stringPairFromAterm aterms)
+stringPairsFromAterm _ = Left NotAList
+
+stringPairFromAterm :: Aterm -> Either BadDerivationAtermError (String, String)
+stringPairFromAterm (Tuple [(QuotedString string1), (QuotedString string2)]) =
+  Right (string1, string2)
+stringPairFromAterm _ = Left NotAStringPair
 
 stringFromAterm :: Aterm -> Either BadDerivationAtermError String
 stringFromAterm (QuotedString string) = pure string

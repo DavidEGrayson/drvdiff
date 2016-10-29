@@ -32,9 +32,10 @@ list = do
   return $ List contents
 
 quotedString = do
-  string <- between (char '"') (char '"') (many quotedStringChar)
+  string <- between quote quote (many quotedStringChar)
   return $ QuotedString string
   where
+    quote = char '"'
     quotedStringChar = escapedChar <|> normalChar
     escapedChar = (char '\\') *> (oneOf ['\\', '"'])
     normalChar = noneOf "\""
