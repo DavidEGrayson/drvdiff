@@ -1,5 +1,7 @@
 module Derivation where
 
+import Data.Generic.Diff
+
 data Derivation = Derivation
   {
     drvOutputs :: [DerivationOutput],
@@ -27,3 +29,24 @@ data DerivationInput = DerivationInput
     drvInputNames :: [String]
   }
   deriving (Show, Eq, Ord)
+
+data DerivationFamily :: * -> * -> * where
+    DerivationF :: DerivationFamily Derivation
+      (Cons [DerivationOutput]
+      (Cons [DerivationInput]
+      (Cons [String]
+      (Cons String
+      (Cons String
+      (Cons [String]
+      (Cons [(String, String)]
+      Nil)))))))
+    -- DerivationOutputF :: DerivationFamily DerivationOutput
+    --   (Cons String
+    --   (Cons String
+    --   (Cons String
+    --   (Cons String
+    --   Nil))))
+    -- DerivationInputF :: DerivationFamily DerivationInput
+    --   (Cons String
+    --   (Cons [String]
+    --   Nil))
