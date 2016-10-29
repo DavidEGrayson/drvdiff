@@ -8,10 +8,17 @@ import System.IO
 
 main :: IO ()
 main = do
-  [drvFilenameA, drvFilenameB] <- getArgs
+  (drvFilenameA, drvFilenameB) <- parseArgs
   drvA <- filenameToDrv drvFilenameA
   drvB <- filenameToDrv drvFilenameB
   putStrLn $ show drvA
+
+parseArgs :: IO (String, String)
+parseArgs = do
+  args <- getArgs
+  case args of
+    [filenameA, filenameB] -> pure $ (filenameA, filenameB)
+    _ -> printErrorStringAndExit "Usage: drvdiff FILENAME FILENAME"
 
 filenameToDrv :: String -> IO Derivation
 filenameToDrv drvFilename = do
@@ -24,6 +31,9 @@ filenameToDrv drvFilename = do
     Right drv -> pure $ drv
 
 printErrorAndExit :: Show e => e -> IO a
-printErrorAndExit error = do
-  hPutStrLn stderr $ show error
+printErrorAndExit error = printErrorStringAndExit (show error)
+
+printErrorStringAndExit :: String -> IO a
+printErrorStringAndExit error = do
+  hPutStrLn stderr $ error
   exitWith (ExitFailure 1)
