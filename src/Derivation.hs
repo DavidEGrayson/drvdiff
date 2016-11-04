@@ -6,20 +6,23 @@ data Derivation = Derivation
   {
     drvOutputs :: [DerivationOutput],
     drvInputs :: [DerivationInput],
-    drvSources :: [String],
-    drvSystem :: String,
-    drvBuilder :: String,
-    drvArgs :: [String],
-    drvEnv :: [(String, String)]
+    drvSources :: [DerivationStr],
+    drvSystem :: DerivationStr,
+    drvBuilder :: DerivationStr,
+    drvArgs :: [DerivationStr],
+    drvEnv :: [DerivationEnvVar]
   }
   deriving (Show, Eq)
 
+data DerivationStr = DerivationStr String
+  deriving (Show, Eq, Ord)
+
 data DerivationOutput = DerivationOutput
   {
-    drvOutputName :: String,
-    drvOutputPath :: String,
-    drvOutputUnknown1 :: String,
-    drvOutputUnknown2 :: String
+    drvOutputName :: DerivationStr,
+    drvOutputPath :: DerivationStr,
+    drvOutputUnknown1 :: DerivationStr,
+    drvOutputUnknown2 :: DerivationStr
   }
   deriving (Show, Eq, Ord)
 
@@ -30,22 +33,29 @@ data DerivationInput = DerivationInput
   }
   deriving (Show, Eq, Ord)
 
+data DerivationEnvVar = DerivationEnvVar
+  {
+    drvEnvName :: String,
+    drvEnvValue :: String
+  }
+  deriving (Show, Eq, Ord)
+
 data DerivationFamily :: * -> * -> * where
     DerivationF :: DerivationFamily Derivation
       (Cons [DerivationOutput]
       (Cons [DerivationInput]
-      (Cons [String]
-      (Cons String
-      (Cons String
-      (Cons [String]
-      (Cons [(String, String)]
+      (Cons [DerivationStr]
+      (Cons DerivationStr
+      (Cons DerivationStr
+      (Cons [DerivationStr]
+      (Cons [DerivationEnvVar]
       Nil)))))))
-    -- DerivationOutputF :: DerivationFamily DerivationOutput
-    --   (Cons String
-    --   (Cons String
-    --   (Cons String
-    --   (Cons String
-    --   Nil))))
+    DerivationOutputF :: DerivationFamily DerivationOutput
+       (Cons DerivationStr
+       (Cons DerivationStr
+       (Cons DerivationStr
+       (Cons DerivationStr
+       Nil))))
     -- DerivationInputF :: DerivationFamily DerivationInput
     --   (Cons String
     --   (Cons [String]
