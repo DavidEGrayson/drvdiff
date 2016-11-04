@@ -7,12 +7,15 @@ import System.Environment
 import System.Exit
 import System.IO
 
+import Data.Generic.Diff
+
 main :: IO ()
 main = do
   (drvFilenameA, drvFilenameB) <- parseArgs
   drvA <- filenameToDrv drvFilenameA
   drvB <- filenameToDrv drvFilenameB
   putStrLn $ show drvA
+  putStrLn $ show (diff drvA drvB)
 
 parseArgs :: IO (String, String)
 parseArgs = do

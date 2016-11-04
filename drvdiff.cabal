@@ -23,4 +23,5 @@ executable drvdiff
   extensions:          GADTs,
                        KindSignatures,
                        LambdaCase,
+                       MultiParamTypeClasses,
                        OverloadedStrings

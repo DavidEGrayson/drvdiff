@@ -50,3 +50,30 @@ data DerivationFamily :: * -> * -> * where
     --   (Cons String
     --   (Cons [String]
     --   Nil))
+
+instance Family DerivationFamily where
+    decEq DerivationF DerivationF = Just (Refl, Refl)
+    fields DerivationF (Derivation drvOutputs drvInputs drvSources drvSystem drvBuilder drvArgs drvEnv)
+       = Just (CCons drvOutputs
+              (CCons drvInputs
+              (CCons drvSources
+              (CCons drvSystem
+              (CCons drvBuilder
+              (CCons drvArgs
+              (CCons drvEnv
+              CNil)))))))
+    apply DerivationF (CCons drvOutputs
+              (CCons drvInputs
+              (CCons drvSources
+              (CCons drvSystem
+              (CCons drvBuilder
+              (CCons drvArgs
+              (CCons drvEnv
+              CNil))))))) = (Derivation drvOutputs drvInputs drvSources drvSystem drvBuilder drvArgs drvEnv)
+    string DerivationF = "DerivationF"
+
+instance Type DerivationFamily Derivation where
+    constructors = [Concr DerivationF]
+
+--instance Type DerivationFamily [(String, String)] where
+--    constructors = [Concr DerivationF]
