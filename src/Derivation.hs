@@ -29,7 +29,7 @@ data DerivationOutput = DerivationOutput
 data DerivationInput = DerivationInput
   {
     drvInputPath :: String,
-    drvInputNames :: [String]
+    drvInputNames :: [DerivationStr]
   }
   deriving (Show, Eq, Ord)
 
@@ -51,15 +51,17 @@ data DerivationFamily :: * -> * -> * where
       (Cons [DerivationEnvVar]
       Nil)))))))
     DerivationOutputF :: DerivationFamily DerivationOutput
-       (Cons DerivationStr
-       (Cons DerivationStr
-       (Cons DerivationStr
-       (Cons DerivationStr
-       Nil))))
-    -- DerivationInputF :: DerivationFamily DerivationInput
-    --   (Cons String
-    --   (Cons [String]
-    --   Nil))
+      (Cons DerivationStr
+      (Cons DerivationStr
+      (Cons DerivationStr
+      (Cons DerivationStr
+      Nil))))
+    DerivationInputF :: DerivationFamily DerivationInput
+      (Cons String
+      (Cons [String]
+      Nil))
+    DerivationStrF :: DerivationFamily DerivationStr
+      (Cons String Nil)
 
 instance Family DerivationFamily where
     decEq DerivationF DerivationF = Just (Refl, Refl)
@@ -82,8 +84,11 @@ instance Family DerivationFamily where
               CNil))))))) = (Derivation drvOutputs drvInputs drvSources drvSystem drvBuilder drvArgs drvEnv)
     string DerivationF = "DerivationF"
 
-instance Type DerivationFamily Derivation where
-    constructors = [Concr DerivationF]
+-- instance Type DerivationFamily Derivation where
+--    constructors = [Concr DerivationF]
 
 --instance Type DerivationFamily [(String, String)] where
 --    constructors = [Concr DerivationF]
+
+instance Type DerivationFamily Derivation where
+    constructors = [Concr DerivationF]
