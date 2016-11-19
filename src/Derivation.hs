@@ -92,3 +92,40 @@ instance Family DerivationFamily where
 
 instance Type DerivationFamily Derivation where
     constructors = [Concr DerivationF]
+
+
+
+-- TODO: remove
+data Foo = Foo
+  {
+    fooEnv :: [FooEnvVar]
+  }
+  deriving (Show, Eq)
+
+data FooStr = FooStr String
+  deriving (Show, Eq, Ord)
+
+data FooEnvVar = FooEnvVar
+  {
+    fooEnvName :: FooStr
+  }
+  deriving (Show, Eq, Ord)
+
+data FooFamily :: * -> * -> * where
+    FooF :: FooFamily Foo
+      (Cons [FooEnvVar]
+      Nil)
+    FooStrF :: FooFamily FooStr
+      (Cons String Nil)
+
+instance Family FooFamily where
+    decEq FooF FooF = Just (Refl, Refl)
+    fields FooF (Foo fooEnv)
+       = Just (CCons fooEnv
+              CNil)
+    apply FooF (CCons fooEnv
+              CNil) = (Foo fooEnv)
+    string FooF = "FooF"
+
+instance Type FooFamily Foo where
+    constructors = [Concr FooF]
