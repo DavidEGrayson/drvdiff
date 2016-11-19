@@ -15,7 +15,7 @@ main = do
   drvA <- filenameToDrv drvFilenameA
   drvB <- filenameToDrv drvFilenameB
   putStrLn $ show drvA
-  putStrLn $ show (diff drvA drvB)
+  putStrLn $ show ((diff drvA drvB) :: EditScript DerivationFamily Derivation Derivation)
 
 parseArgs :: IO (String, String)
 parseArgs = do

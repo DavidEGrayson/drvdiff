@@ -84,48 +84,21 @@ instance Family DerivationFamily where
               CNil))))))) = (Derivation drvOutputs drvInputs drvSources drvSystem drvBuilder drvArgs drvEnv)
     string DerivationF = "DerivationF"
 
--- instance Type DerivationFamily Derivation where
---    constructors = [Concr DerivationF]
-
---instance Type DerivationFamily [(String, String)] where
---    constructors = [Concr DerivationF]
-
 instance Type DerivationFamily Derivation where
     constructors = [Concr DerivationF]
 
+instance Type DerivationFamily [DerivationStr] where
+  constructors = []
 
+instance Type DerivationFamily [DerivationOutput] where
+  constructors = []
 
--- TODO: remove
-data Foo = Foo
-  {
-    fooEnv :: [FooEnvVar]
-  }
-  deriving (Show, Eq)
+instance Type DerivationFamily [DerivationInput] where
+  constructors = []
 
-data FooStr = FooStr String
-  deriving (Show, Eq, Ord)
+instance Type DerivationFamily [DerivationEnvVar] where
+  constructors = []
 
-data FooEnvVar = FooEnvVar
-  {
-    fooEnvName :: FooStr
-  }
-  deriving (Show, Eq, Ord)
+instance Type DerivationFamily DerivationStr where
+  constructors = []
 
-data FooFamily :: * -> * -> * where
-    FooF :: FooFamily Foo
-      (Cons [FooEnvVar]
-      Nil)
-    FooStrF :: FooFamily FooStr
-      (Cons String Nil)
-
-instance Family FooFamily where
-    decEq FooF FooF = Just (Refl, Refl)
-    fields FooF (Foo fooEnv)
-       = Just (CCons fooEnv
-              CNil)
-    apply FooF (CCons fooEnv
-              CNil) = (Foo fooEnv)
-    string FooF = "FooF"
-
-instance Type FooFamily Foo where
-    constructors = [Concr FooF]

@@ -24,4 +24,5 @@ executable drvdiff
                        KindSignatures,
                        LambdaCase,
                        MultiParamTypeClasses,
-                       OverloadedStrings
+                       OverloadedStrings,
+                       FlexibleInstances
