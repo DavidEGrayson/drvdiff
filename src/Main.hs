@@ -26,16 +26,16 @@ filenameToDrv :: String -> IO Derivation
 filenameToDrv drvFilename = do
   drvString <- readFile drvFilename
   drvAterm <- case parseAterm drvFilename drvString of
-    Left error -> printErrorAndExit error
+    Left err -> printErrorAndExit err
     Right aterm -> pure $ aterm
   case drvFromAterm drvAterm of
-    Left error -> printErrorAndExit error
+    Left err -> printErrorAndExit err
     Right drv -> pure $ drv
 
 printErrorAndExit :: Show e => e -> IO a
-printErrorAndExit error = printErrorStringAndExit (show error)
+printErrorAndExit err = printErrorStringAndExit (show err)
 
 printErrorStringAndExit :: String -> IO a
-printErrorStringAndExit error = do
-  hPutStrLn stderr $ error
+printErrorStringAndExit err = do
+  hPutStrLn stderr $ err
   exitWith (ExitFailure 1)

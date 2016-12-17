@@ -27,7 +27,7 @@ drvFromDeriveArgs [outputs, inputs, sources, system, builder, args, env] =
   <*> stringFromAterm builder
   <*> listFromAterm stringFromAterm args
   <*> listFromAterm stringPairFromAterm env
-drvFromDerivArgs _ = Left WrongConstructorArgCount
+drvFromDeriveArgs _ = Left WrongConstructorArgCount
 
 listFromAterm :: (Aterm -> Either BadDerivationAtermError a) -> Aterm
   -> Either BadDerivationAtermError [a]
