@@ -43,5 +43,6 @@ quotedString = do
   where
     quote = char '"'
     quotedStringChar = escapedChar <|> normalChar
-    escapedChar = (char '\\') *> (oneOf ['\\', '"'])
     normalChar = noneOf "\""
+    escapedChar = (char '\\') *> ((oneOf ['\\', '"']) <|> n)
+    n = char 'n' *> pure '\n'
