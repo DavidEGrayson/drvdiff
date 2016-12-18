@@ -1,3 +1,5 @@
+-- TODO: change this to a pure thing that just generates a string
+
 module DrvDiffPrint (printDrvDiff) where
 
 import DrvDiff

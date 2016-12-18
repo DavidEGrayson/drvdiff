@@ -24,4 +24,5 @@ executable drvdiff
                         LambdaCase,
                         MultiParamTypeClasses,
                         OverloadedStrings,
-                        FlexibleInstances
+                        FlexibleInstances,
+                        ScopedTypeVariables
