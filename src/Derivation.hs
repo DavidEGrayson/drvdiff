@@ -4,30 +4,27 @@ data Derivation = Derivation
   {
     drvOutputs :: [DerivationOutput],
     drvInputs :: [DerivationInput],
-    drvSources :: [DerivationStr],
-    drvSystem :: DerivationStr,
-    drvBuilder :: DerivationStr,
-    drvArgs :: [DerivationStr],
+    drvSources :: [String],
+    drvSystem :: String,
+    drvBuilder :: String,
+    drvArgs :: [String],
     drvEnv :: [DerivationEnvVar]
   }
   deriving (Show, Eq)
 
-data DerivationStr = DerivationStr String
-  deriving (Show, Eq, Ord)
-
 data DerivationOutput = DerivationOutput
   {
-    drvOutputName :: DerivationStr,
-    drvOutputPath :: DerivationStr,
-    drvOutputUnknown1 :: DerivationStr,
-    drvOutputUnknown2 :: DerivationStr
+    drvOutputName :: String,
+    drvOutputPath :: String,
+    drvOutputUnknown1 :: String,
+    drvOutputUnknown2 :: String
   }
   deriving (Show, Eq, Ord)
 
 data DerivationInput = DerivationInput
   {
     drvInputPath :: String,
-    drvInputNames :: [DerivationStr]
+    drvInputNames :: [String]
   }
   deriving (Show, Eq, Ord)
 

@@ -38,7 +38,7 @@ outputFromAterm :: Aterm -> Either BadDerivationAtermError DerivationOutput
 outputFromAterm (Tuple [
     QuotedString name, QuotedString path,
     QuotedString unknown1, QuotedString unknown2
-  ]) = Right (DerivationOutput (DerivationStr name) (DerivationStr path) (DerivationStr unknown1) (DerivationStr unknown2))
+  ]) = Right (DerivationOutput name path unknown1 unknown2)
 outputFromAterm _ = Left NotAnOutput
 
 inputFromAterm :: Aterm -> Either BadDerivationAtermError DerivationInput
@@ -46,7 +46,7 @@ inputFromAterm (Tuple [QuotedString path, outputs]) =
   DerivationInput path <$> stringListFromAterm outputs
 inputFromAterm _ = Left NotAnInput
 
-stringListFromAterm :: Aterm -> Either BadDerivationAtermError [DerivationStr]
+stringListFromAterm :: Aterm -> Either BadDerivationAtermError [String]
 stringListFromAterm (List aterms) = sequence (fmap stringFromAterm aterms)
 stringListFromAterm _ = Left NotAList
 
@@ -55,6 +55,6 @@ stringPairFromAterm (Tuple [QuotedString string1, QuotedString string2]) =
   Right (DerivationEnvVar string1 string2)
 stringPairFromAterm _ = Left NotAStringPair
 
-stringFromAterm :: Aterm -> Either BadDerivationAtermError DerivationStr
-stringFromAterm (QuotedString string) = pure (DerivationStr string)
+stringFromAterm :: Aterm -> Either BadDerivationAtermError String
+stringFromAterm (QuotedString string) = pure string
 stringFromAterm _ = Left NotAString

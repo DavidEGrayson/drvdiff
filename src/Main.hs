@@ -2,6 +2,8 @@ module Main where
 
 import Derivation
 import DrvFromAterm
+import DrvDiffMake
+import DrvDiffPrint
 import Parser
 import System.Environment
 import System.Exit
@@ -12,8 +14,8 @@ main = do
   (drvFilenameA, drvFilenameB) <- parseArgs
   drvA <- filenameToDrv drvFilenameA
   drvB <- filenameToDrv drvFilenameB
-  putStrLn $ show drvA
-  putStrLn $ show drvB
+  diff <- pure $ makeDrvDiff drvA drvB
+  printDrvDiff diff
 
 parseArgs :: IO (String, String)
 parseArgs = do
