@@ -3,7 +3,7 @@ module Main where
 import Derivation
 import DrvFromAterm
 import DrvDiffMake
-import DrvDiffPrint
+import DrvDiffToString
 import Parser
 import System.Environment
 import System.Exit
@@ -15,7 +15,7 @@ main = do
   drvA <- filenameToDrv drvFilenameA
   drvB <- filenameToDrv drvFilenameB
   diff <- pure $ makeDrvDiff drvA drvB
-  printDrvDiff diff
+  putStr $ drvDiffToString diff
 
 parseArgs :: IO (String, String)
 parseArgs = do
