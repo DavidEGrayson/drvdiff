@@ -1,4 +1,4 @@
-module DrvDiffToString (drvDiffToString) where
+module DrvDiffToString where
 
 import DrvDiff
 import Derivation
@@ -24,6 +24,9 @@ drvPartToString prefix p =
 
 joinLines :: String -> [String] -> String
 joinLines prefix ls = intercalate "" (map (\x -> prefix ++ x ++ "\n") ls)
+
+setDiffToString :: ([String], [String]) -> String
+setDiffToString (l, r) = (joinLines "- " l) ++ (joinLines "+ " r)
 
 drvOutputToString :: DerivationOutput -> String
 drvOutputToString (DerivationOutput name path _ _) =

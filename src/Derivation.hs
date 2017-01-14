@@ -1,5 +1,8 @@
 module Derivation where
 
+import Data.Maybe (listToMaybe)
+import Data.List.Split
+
 data Derivation = Derivation
   {
     drvOutputs :: [DerivationOutput],
@@ -34,3 +37,15 @@ data DerivationEnvVar = DerivationEnvVar
     drvEnvValue :: String
   }
   deriving (Show, Eq, Ord)
+
+drvEnvVar :: String -> Derivation -> Maybe String
+drvEnvVar name drv = fmap drvEnvValue
+  (listToMaybe (filter (\ev -> (drvEnvName ev) == name) (drvEnv drv)))
+
+drvEnvVarAsSet :: String -> Derivation -> [String]
+drvEnvVarAsSet name drv =
+  case drvEnvVar name drv of
+    Nothing -> []
+    Just str -> (split . dropInitBlank . dropFinalBlank . condense . dropDelims . oneOf) " \t\n" str
+    -- TODO: Why is this sometimes returning empty strings?  And why are there
+    -- empty strings at the end and the beginning of the list?

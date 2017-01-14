@@ -1,4 +1,4 @@
-module DrvDiffMake (makeDrvDiff) where
+module DrvDiffMake where
 
 import Derivation
 import DrvDiff

@@ -9,20 +9,31 @@ import System.Environment
 import System.Exit
 import System.IO
 
+data MainAction =
+     CompareWholeDrv |
+     CompareEnvVarAsSet String
+
 main :: IO ()
 main = do
-  (drvFilenameA, drvFilenameB) <- parseArgs
+  (drvFilenameA, drvFilenameB, mainAction) <- parseArgs
   drvA <- filenameToDrv drvFilenameA
   drvB <- filenameToDrv drvFilenameB
-  diff <- pure $ makeDrvDiff drvA drvB
-  putStr $ drvDiffToString diff
+  case mainAction of
+    CompareWholeDrv -> do
+      diff <- pure $ makeDrvDiff drvA drvB
+      putStr $ drvDiffToString diff
+    CompareEnvVarAsSet envVarName -> do
+      diff <- pure $ listDiff (drvEnvVarAsSet envVarName drvA)
+                              (drvEnvVarAsSet envVarName drvB)
+      putStr $ setDiffToString diff
 
-parseArgs :: IO (String, String)
+parseArgs :: IO (String, String, MainAction)
 parseArgs = do
   args <- getArgs
   case args of
-    [filenameA, filenameB] -> pure $ (filenameA, filenameB)
-    _ -> printErrorStringAndExit "Usage: drvdiff FILENAME FILENAME"
+    [filenameA, filenameB] -> pure $ (filenameA, filenameB, CompareWholeDrv)
+    [filenameA, filenameB, "-e", envVarName] -> pure $ (filenameA, filenameB, CompareEnvVarAsSet envVarName)
+    _ -> printErrorStringAndExit "Usage: drvdiff FILENAME FILENAME [OPTIONS]"
 
 filenameToDrv :: String -> IO Derivation
 filenameToDrv drvFilename = do
