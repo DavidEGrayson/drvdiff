@@ -2,6 +2,7 @@ module Derivation where
 
 import Data.Maybe (listToMaybe)
 import Data.List.Split
+import Data.Set (toList, fromList)
 
 data Derivation = Derivation
   {
@@ -46,6 +47,8 @@ drvEnvVarAsSet :: String -> Derivation -> [String]
 drvEnvVarAsSet name drv =
   case drvEnvVar name drv of
     Nothing -> []
-    Just str -> (split . dropInitBlank . dropFinalBlank . condense . dropDelims . oneOf) " \t\n" str
+    Just str -> toList $ fromList $
+      (split . dropInitBlank . dropFinalBlank . condense . dropDelims . oneOf)
+      " \t\n" str
     -- TODO: Why is this sometimes returning empty strings?  And why are there
     -- empty strings at the end and the beginning of the list?
