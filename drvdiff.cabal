@@ -1,30 +1,39 @@
-name:                   drvdiff
-version:                0.1.0
-synopsis:               Shows differences between Nix derivations.
-homepage:               https://github.com/DavidEGrayson/drvdiff
-license:                MIT
-license-file:           LICENSE
-author:                 David Grayson
-maintainer:             davidegrayson@gmail.com
-category:               Development
-build-type:             Simple
-cabal-version:          >=1.10
+-- This file has been generated from package.yaml by hpack version 0.17.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           drvdiff
+version:        0.1.0.0
+category:       Web
+homepage:       https://github.com/githubuser/drvdiff#readme
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2017 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    README.md
 
 executable drvdiff
-  ghc-options:          -Wall
-  hs-source-dirs:       src
-  main-is:              Main.hs
-  build-depends:        base >=4.9 && <4.10,
-                        parsec >=3.1.11 && <4.0.0,
-                        text >=1.2.2.1 && <2.0.0.0,
-                        split >=0.2.3.1 && <1.0.0.0,
-                        containers >=0.5.7.1 && <1.0.0.0
-  hs-source-dirs:       src
-  default-language:     Haskell2010
-  default-extensions:   GADTs,
-                        KindSignatures,
-                        LambdaCase,
-                        MultiParamTypeClasses,
-                        OverloadedStrings,
-                        FlexibleInstances,
-                        ScopedTypeVariables
+  main-is: Main.hs
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -XGADTs -XKindSignatures -XLambdaCase -XMultiParamTypeClasses -XOverloadedStrings -XFlexibleInstances -XScopedTypeVariables
+  build-depends:
+      base
+    , parsec
+    , text
+    , split
+    , containers
+  other-modules:
+      Aterm
+      Derivation
+      DrvDiff
+      DrvDiffMake
+      DrvDiffToString
+      DrvFromAterm
+      Parser
+  default-language: Haskell2010
